@@ -44,6 +44,7 @@ make_insert_line <- function(values) {
 # INSERT #
 ##########
 
+# Run a insert query on a MySQL database.
 # conn      Connection to a database.
 # table     Table name.
 # fields    List of field names.
@@ -62,4 +63,51 @@ insert <- function(conn, table, fields, values) {
 
 	# Send query
 	run_query(conn, qr)
+}
+
+########
+# JOIN #
+########
+
+Join <- setRefClass("Join", fields = list(table = "character", left_field = "character", right_field = "character"))
+
+Join$methods( initialize = function(table, left_field, right_field) {
+	table <<- table
+	left_field <<- left_field
+	right_field <<- right_field
+})
+
+##########
+# SELECT #
+##########
+
+# Run a select query on a MySQL database. Returns the dataframe of results.
+# conn      Connection to a database.
+select <- function(conn, fields, from, joins = NULL , where = NULL) {
+
+	# Select/from
+	rq <- paste("SELECT ", paste(fields, collapse = ', '), 'FROM', from)
+
+	# Joins
+	if ( ! is.null(joins) && length(joins) > 0)
+		rq <- paste(rq, paste(lapply(joins, function (x) { paste('INNER JOIN', x$table, 'ON', x$left_field, '=', x$right_field) } ), collapse = ' '))
+
+	# Where
+	if ( ! is.null(where)) rq <- paste(rq, 'WHERE', where)
+
+	# End request, send it and get results
+	rq <- paste0(rq, ';')
+	res <- try(dbSendQuery(conn, rq))
+	data <- fetch(res, n=-1)
+
+	return(data)
+}
+
+#######################
+# SELECT SINGLE FIELD #
+#######################
+
+select_single_field <- function(conn, field, from, where = NULL) {
+	values <- select(conn, fields = field, from = from, where = where)
+	return(if (length(values[field][[1]]) > 0) values[field][[1]] else NA_character_)
 }
