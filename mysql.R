@@ -1,5 +1,4 @@
-library(DBI)
-library(RMySQL)
+library(RMySQL, quietly = TRUE)
 
 #############
 # RUN QUERY #
@@ -109,5 +108,5 @@ select <- function(conn, fields, from, joins = NULL , where = NULL) {
 
 select_single_field <- function(conn, field, from, where = NULL) {
 	values <- select(conn, fields = field, from = from, where = where)
-	return(if (length(values[field][[1]]) > 0) values[field][[1]] else NA_character_)
+	return(if (field %in% colnames(values) && length(values[field][[1]]) > 0) values[field][[1]] else NA_character_)
 }
