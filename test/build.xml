@@ -1,0 +1,12 @@
+<project name="fr.cea.r-lib.test" default="all">
+
+	<!-- ALL -->
+	<target name="all">
+		<exec executable="./test-mysql" failonerror="true"/>
+	</target>
+
+	<!-- CLEAN -->
+	<target name="clean"/>
+
+</project>
+

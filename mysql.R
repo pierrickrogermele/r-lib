@@ -4,13 +4,90 @@ library(RMySQL, quietly = TRUE)
 # RUN QUERY #
 #############
 
-run_query <- function(conn, query) {
-	result <- dbSendQuery(conn, query)
-	if ( ! dbHasCompleted(result)) {
-		print("Can't run the following query :")
-		print(query)
-		exit(1)
+# conn              The connection to the database.
+# queries           A query or a list of queries.
+# close             Close query with a ';' if not already done.
+# RETURN            The last query result.
+run_query <- function(conn, queries, close = TRUE) {
+
+	for (query in queries) {
+
+		# Append ';'
+		if (close) {
+			n <- nchar(query)
+			if (substr(query, n, n) != ';')
+				query <- paste0(query, ';')
+		}
+
+		# Send query
+		result <- try(dbSendQuery(conn, query))
+
+		# Test that everything went right
+		if ( ! dbHasCompleted(result))
+			stop("Can't run the following query : ", query)
 	}
+
+	# Return result
+	return(invisible(result))
+}
+
+################
+# RUN SQL FILE #
+################
+
+# conn  The connection to the DBMS.
+# file  The path to the SQL file.
+run_sql_file <- function(conn, file) {
+
+	# Split SQL into single queries and put them into a list
+	queries <- character()
+	query <- ""
+	for (line in readLines(file)) {
+		if (grepl("^\\s*$", line)) next # empty line
+		query <- paste(query, line)
+		if (grepl(";\\s*$", line, perl=TRUE)) {
+			query <- gsub("\t", " ", query, perl=TRUE) # replace tabulation by spaces
+			query <- gsub("/\\*.*\\*/", "", query, perl=TRUE) # remove comments
+			queries <- c(queries, query)
+			query <- ""
+		}
+	}
+
+	# Run queries
+	invisible(run_query(conn, queries))
+}
+
+#################
+# DROP DATABASE #
+#################
+
+# conn                  The connection to the DBMS.
+# db                    The name of the database to drop.
+# fail_if_doesnt_exist  Fails if database doesn't exist.
+drop_database <- function(conn, db, fail_if_doesnt_exist = FALSE) {
+	invisible(run_query(conn, paste("drop database", if (fail_if_doesnt_exist) "" else "if exists", db)))
+}
+
+###################
+# CREATE DATABASE #
+###################
+
+# conn      The connection to the DBMS.
+# db        The name of the database to create.
+# drop      Drop/erase existing database.
+# encoding  Set the character set encoding to use as default for the database.
+# use       If true, switch to the newly created database.
+create_database <- function(conn, db, drop = FALSE, encoding = 'utf8', use = TRUE) {
+
+	# Drop database
+	if (drop) drop_database(conn, db)
+
+	# Create database
+	enc <- if (is.null(encoding) || is.na(encoding)) "" else paste("character set", encoding)
+	run_query(conn, paste("create database", db, enc))
+
+	# Switch to database
+	invisible(run_query(conn, paste("use", db)))
 }
 
 ##############################

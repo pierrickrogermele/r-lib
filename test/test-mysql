@@ -1,0 +1,36 @@
+#!/usr/bin/env Rscript
+# vi: ft=R
+library(RUnit)
+source('../mysql.R', chdir = TRUE)
+
+#############
+# CREATE DB #
+#############
+
+test_create_db <- function(conn) {
+	drop_database(conn, db = 'test_r_lib_mysql')
+	create_database(conn, db = 'test_r_lib_mysql')
+	create_database(conn, db = 'test_r_lib_mysql', drop = TRUE)
+	drop_database(conn, db = 'test_r_lib_mysql', fail_if_doesnt_exist = TRUE)
+	create_database(conn, db = 'test_r_lib_mysql')
+}
+
+#####################
+# TEST RUN SQL FILE #
+#####################
+
+test_run_sql_file <- function(conn) {
+	for (file in Sys.glob("files/*.sql"))
+		run_sql_file(conn, file)
+}
+
+########
+# MAIN #
+########
+
+# Open connection
+conn <- dbConnect(MySQL(), user = 'root', host = 'localhost')
+
+# Tests
+test_create_db(conn)
+test_run_sql_file(conn)
