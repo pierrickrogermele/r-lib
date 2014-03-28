@@ -34,8 +34,20 @@ test_trimming <- function() {
 	test_trim()
 }
 
+##################
+# TEST SPLITTING #
+##################
+
+test_split <- function() {
+	checkIdentical(list(character(0)), split("", ","))
+	checkIdentical(character(0), split("", ",", unlist = TRUE))
+	checkIdentical(list(c("12", "13")), split("12,13", ","))
+	checkIdentical(c("12", "13"), split("12,13", ",", unlist = TRUE))
+}
+
 ########
 # MAIN #
 ########
 
 test_trimming()
+test_split()
