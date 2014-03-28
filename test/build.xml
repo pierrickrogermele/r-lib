@@ -3,6 +3,7 @@
 	<!-- ALL -->
 	<target name="all">
 		<exec executable="./test-mysql" failonerror="true"/>
+		<exec executable="./test-strhlp" failonerror="true"/>
 	</target>
 
 	<!-- CLEAN -->

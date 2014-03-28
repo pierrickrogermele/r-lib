@@ -1,0 +1,41 @@
+#!/usr/bin/env Rscript
+# vi: ft=R
+library(RUnit)
+source('../strhlp.R', chdir = TRUE)
+
+#################
+# TEST TRIMMING #
+#################
+
+test_trim_leading <- function() {
+	checkEquals("A", trim.leading("A"))
+	checkEquals("A", trim.leading(" A"))
+	checkEquals("A ", trim.leading("A "))
+	checkEquals("A ", trim.leading("   A "))
+}
+
+test_trim_trailing <- function() {
+	checkEquals("A", trim.trailing("A"))
+	checkEquals("A", trim.trailing("A "))
+	checkEquals(" A", trim.trailing(" A"))
+	checkEquals(" A", trim.trailing(" A   "))
+}
+
+test_trim <- function() {
+	checkEquals("A", trim("A"))
+	checkEquals("A", trim("A "))
+	checkEquals("A", trim(" A"))
+	checkEquals("A", trim(" A   "))
+}
+
+test_trimming <- function() {
+	test_trim_leading()
+	test_trim_trailing()
+	test_trim()
+}
+
+########
+# MAIN #
+########
+
+test_trimming()
