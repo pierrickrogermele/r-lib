@@ -1,3 +1,5 @@
+source("tolst.R")
+
 # Convert lists and objects to string representation. Supported outputs are:
 #   _ Text.
 #   _ PHP code.
@@ -96,7 +98,7 @@
 	       stop("Unknown mode '", mode, "'.")
 		  )
 
-	if ( ! is.na(var))
+	if ( ! is.null(var) && ! is.na(var))
 		str <- .set_str_to_variable(str, mode, var)
 
 	return(str)
@@ -122,7 +124,7 @@
 	str <- if (length(value) == 1 && ! lst && is.null(names(value))) as.character(value) else .join_values(.set_keys(value, mode = mode), mode = mode)
 
 	# Set to variable
-	if ( ! is.na(var))
+	if ( ! is.null(var) && ! is.na(var))
 		str <- .set_str_to_variable(str, mode, var)
 
 	return(str)
@@ -143,14 +145,16 @@
 
 	# 
 	vstr <- character()
-	keys <- unlist(lapply(names(vlist), function(x) if (nchar(x) == 0) x else .quote_values(x, mode = mode, keys = TRUE)))
-	values <- lapply(vlist, function(x) tostr(x, mode = mode))
-	sep <- switch(mode,
-	              txt = '=>',
-	              php = '=>',
-		          stop("Unknown mode '", mode, "'.")
-		         )
-	vstr <- unlist(lapply(1:length(vlist), function(i) if (is.null(keys) || nchar(keys[i]) == 0) values[[i]] else paste(keys[i], sep, values[[i]])))
+	if (length(vlist) > 0) {
+		keys <- unlist(lapply(names(vlist), function(x) if (nchar(x) == 0) x else .quote_values(x, mode = mode, keys = TRUE)))
+		values <- lapply(vlist, function(x) tostr(x, mode = mode))
+		sep <- switch(mode,
+	              	  txt = '=>',
+	              	  php = '=>',
+		          	  stop("Unknown mode '", mode, "'.")
+		         	 )
+		vstr <- unlist(lapply(1:length(vlist), function(i) if (is.null(keys) || nchar(keys[i]) == 0) values[[i]] else paste(keys[i], sep, values[[i]])))
+	}
 
 	# Join string values
 	if (length(vstr) > 1 || lst || ! is.null(keys))
@@ -159,7 +163,7 @@
 		str <- vstr
 			
 	# Set to variable
-	if ( ! is.na(var))
+	if ( ! is.null(var) && ! is.na(var))
 		str <- .set_str_to_variable(str, mode, var)
 
 	return(str)
@@ -175,8 +179,11 @@
 # lst   If true, print the output as a list or array, even if it contains only one value.
 tostr <- function(obj, mode = 'txt', var = NA_character_, lst = FALSE) { 
 
-	if (is.list(obj))
-		return(.list_to_str(obj, mode = mode, var = var, lst = lst))
-
-	return(.value_to_str(obj, mode = mode, var = var, lst = lst))
+	switch(typeof(obj),
+	       S4   = str <- tostr(tolst(obj), mode = mode, var = var, lst = lst),
+	       list = str <- .list_to_str(obj, mode = mode, var = var, lst = lst),
+	              str <- .value_to_str(obj, mode = mode, var = var, lst = lst)
+	      )
+		
+	return(str)
 }

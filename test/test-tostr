@@ -7,7 +7,7 @@ source('../tostr.R', chdir = TRUE)
 # TEST VALUE TO STR #
 #####################
 
-test_value_to_str <- function() {
+test_tostr <- function() {
 	checkEquals("null", tostr(character()))
 	checkEquals("()", tostr(character(), lst = TRUE))
 	checkEquals("[]", tostr(character(), lst = TRUE, mode = 'php'))
@@ -43,4 +43,4 @@ test_value_to_str <- function() {
 # MAIN #
 ########
 
-test_value_to_str()
+test_tostr()
