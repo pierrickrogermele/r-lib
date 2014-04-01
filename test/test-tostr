@@ -1,0 +1,46 @@
+#!/usr/bin/env Rscript
+# vi: ft=R
+library(RUnit, quietly = TRUE)
+source('../tostr.R', chdir = TRUE)
+
+#####################
+# TEST VALUE TO STR #
+#####################
+
+test_value_to_str <- function() {
+	checkEquals("null", tostr(character()))
+	checkEquals("()", tostr(character(), lst = TRUE))
+	checkEquals("[]", tostr(character(), lst = TRUE, mode = 'php'))
+	checkEquals("null", tostr(character(), 'txt'))
+	checkEquals("null", tostr(integer(), 'txt'))
+	checkEquals("NA", tostr(NA_integer_, 'txt'))
+	checkEquals("12", tostr(c(12), 'txt'))
+
+	checkEquals("(12)", tostr(c(12), 'txt', lst = TRUE))
+	checkEquals("[12]", tostr(c(12), 'php', lst = TRUE))
+	checkEquals('("aaa", "bbb")', tostr(c("aaa", "bbb"), 'txt'))
+	checkEquals('["aaa", "bbb"]', tostr(c("aaa", "bbb"), 'php'))
+	checkEquals("NULL", tostr(character(), 'php'))
+	checkEquals("z = 12", tostr(c(12), 'txt', var = 'z'))
+	checkEquals("z = (12)", tostr(c(12), 'txt', var = 'z', lst = TRUE))
+	checkEquals("$z = [12];", tostr(c(12), 'php', lst = TRUE, var = 'z'))
+
+	# Test hashes/dictionaries
+	checkEquals("(zap => 12)", tostr(c(zap = 12), 'txt'))
+	checkEquals("(zap => 12, toto => 18)", tostr(c(zap = 12, toto = 18), 'txt'))
+	checkEquals("(zap => 12, 2 => 18)", tostr(c(zap = 12, 18), 'txt'))
+
+	# Test lists
+	checkEquals("12", tostr(list(12), 'txt'))
+	checkEquals("(12)", tostr(list(12), 'txt', lst = TRUE))
+	checkEquals('(12, 13, "zoo")', tostr(list(12, 13, "zoo"), 'txt'))
+	checkEquals('(zap => 12, 13, "zoo")', tostr(list(zap = 12, 13, "zoo"), 'txt'))
+	checkEquals('(12, jump => 13, "zoo")', tostr(list(12, jump = 13, "zoo"), 'txt'))
+	checkEquals('(12, jump => 13, "zoo", (5, 67, 1))', tostr(list(12, jump = 13, "zoo", c(5, 67, 1)), 'txt'))
+}
+
+########
+# MAIN #
+########
+
+test_value_to_str()

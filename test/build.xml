@@ -2,8 +2,9 @@
 
 	<!-- ALL -->
 	<target name="all">
-		<exec executable="./test-mysql" failonerror="true"/>
+		<exec executable="./test-tostr" failonerror="true"/>
 		<exec executable="./test-strhlp" failonerror="true"/>
+		<exec executable="./test-mysql" failonerror="true"/>
 	</target>
 
 	<!-- CLEAN -->
