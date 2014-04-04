@@ -172,7 +172,7 @@ Join$methods( getStatement = function() {
 
 # Run a select query on a MySQL database. Returns the dataframe of results.
 # conn      Connection to a database.
-select <- function(conn, fields, from, joins = NULL , where = NULL) {
+select <- function(conn, fields, from, joins = NULL , where = NULL, orderby = NULL) {
 
 	# Select/from
 	rq <- paste("SELECT ", paste(fields, collapse = ', '), 'FROM', from)
@@ -183,6 +183,9 @@ select <- function(conn, fields, from, joins = NULL , where = NULL) {
 
 	# Where
 	if ( ! is.null(where)) rq <- paste(rq, 'WHERE', where)
+
+	# Order by
+	if ( ! is.null(orderby)) rq <- paste(rq, 'ORDER BY', orderby)
 
 	# End request, send it and get results
 	rq <- paste0(rq, ';')
