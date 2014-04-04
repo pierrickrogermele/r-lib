@@ -145,12 +145,25 @@ insert <- function(conn, table, fields, values) {
 # JOIN #
 ########
 
-Join <- setRefClass("Join", fields = list(table = "character", left_field = "character", right_field = "character"))
+Join <- setRefClass("Join", fields = list(table = "character", left_field = "character", right_field = "character", outer = "character"))
 
-Join$methods( initialize = function(table, left_field, right_field) {
+Join$methods( initialize = function(table, left_field, right_field, outer = NA_character_) {
 	table <<- table
 	left_field <<- left_field
 	right_field <<- right_field
+	outer <<- outer
+})
+
+Join$methods( getStatement = function() {
+	type <- 'INNER JOIN'
+	if ( ! is.na(outer))
+		switch(tolower(outer),
+		       left  = type <- 'LEFT OUTER JOIN',
+		       right = type <- 'RIGHT OUTER JOIN',
+		       stop('Error in join outer type. "', outer ,'" is unknown. You must choose between "LEFT" and "RIGHT".')
+		      )
+
+	return(paste(type, .self$table, 'ON', .self$left_field, '=', .self$right_field))
 })
 
 ##########
@@ -166,7 +179,7 @@ select <- function(conn, fields, from, joins = NULL , where = NULL) {
 
 	# Joins
 	if ( ! is.null(joins) && length(joins) > 0)
-		rq <- paste(rq, paste(lapply(joins, function (x) { paste('INNER JOIN', x$table, 'ON', x$left_field, '=', x$right_field) } ), collapse = ' '))
+		rq <- paste(rq, paste(lapply(joins, function (x) x$getStatement() ), collapse = ' '))
 
 	# Where
 	if ( ! is.null(where)) rq <- paste(rq, 'WHERE', where)
@@ -185,5 +198,6 @@ select <- function(conn, fields, from, joins = NULL , where = NULL) {
 
 select_single_field <- function(conn, field, from, where = NULL) {
 	values <- select(conn, fields = field, from = from, where = where)
-	return(if (field %in% colnames(values) && length(values[field][[1]]) > 0) values[field][[1]] else NA_character_)
+	val <- if (field %in% colnames(values) && length(values[field][[1]]) > 0) values[field][[1]] else NA_character_
+	return(val)
 }
