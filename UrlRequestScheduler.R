@@ -5,7 +5,7 @@ library(RCurl)
 # CLASS DECLARATION #
 #####################
 
-UrlRequestScheduler <- setRefClass("UrlRequestScheduler", fields = list(n = "numeric", t = "numeric", time_of_last_request = "ANY"))
+UrlRequestScheduler <- setRefClass("UrlRequestScheduler", fields = list(n = "numeric", t = "numeric", time_of_last_request = "ANY", useragent = "character"))
 
 # n: number of connections
 # t: time (in seconds)
@@ -16,18 +16,28 @@ UrlRequestScheduler <- setRefClass("UrlRequestScheduler", fields = list(n = "num
 # CONSTRUCTOR #
 ###############
 
-UrlRequestScheduler$methods( initialize = function(n = 1, t = 1, ...) {
+UrlRequestScheduler$methods( initialize = function(n = 1, t = 1, useragent = NA_character_, ...) {
 	n <<- n
 	t <<- t
 	time_of_last_request <<- -1
+	useragent <<- useragent
 	callSuper(...) # calls super-class initializer with remaining parameters
 })
 
-###########
-# GET URL #
-###########
+##################
+# SET USER AGENT #
+##################
 
-UrlRequestScheduler$methods( getUrl = function(url, useragent) {
+UrlRequestScheduler$methods( setUserAgent = function(useragent) {
+	useragent <<- useragent
+})
+
+##################
+# WAIT AS NEEDED #
+##################
+
+# Wait the specified between two requests.
+UrlRequestScheduler$methods( .wait_as_needed = function() {
 
 	# Compute minimum waiting time between two URL requests
 	waiting_time <- .self$t / .self$n
@@ -41,7 +51,39 @@ UrlRequestScheduler$methods( getUrl = function(url, useragent) {
 
 	# Store current time
 	time_of_last_request <<- Sys.time()
+})
 
-	# Send URL request and return results
-	return(getURL(url, useragent = useragent))
+####################
+# GET CURL OPTIONS #
+####################
+
+UrlRequestScheduler$methods( .get_curl_opts = function(url) {
+	opts <- curlOptions(useragent = .self$useragent)
+	return(opts)
+})
+
+###########
+# GET URL #
+###########
+
+UrlRequestScheduler$methods( getUrl = function(url, params = NULL, method = 'GET') {
+
+	content <- NA_character_
+
+	# Wait required time between two requests
+	.self$.wait_as_needed()
+
+	# Use form to send URL request
+	if ( ! is.null(params) && ! is.na(params))
+		switch(method,
+		       GET = { content <- getForm(url, .opts = .self$.get_curl_opts(), .params = params) },
+		       POST = { content <- postForm(url, .opts = .self$.get_curl_opts(), .params = params) },
+		       stop(paste('Unknown method "', method, '".'))
+		      )
+
+	# Get URL normally
+	else
+		content <- getURL(url, .opts = .self$.get_curl_opts())
+
+	return(content)
 })
