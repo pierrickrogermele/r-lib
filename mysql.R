@@ -20,11 +20,11 @@ run_query <- function(conn, queries, close = TRUE) {
 		}
 
 		# Send query
-		result <- try(dbSendQuery(conn, query))
+		result <- dbSendQuery(conn, query)
 
 		# Test that everything went right
-		if ( ! dbHasCompleted(result))
-			stop("Can't run the following query : ", query)
+#		if ( ! dbHasCompleted(result))
+#			stop("Can't run the following query : ", query)
 	}
 
 	# Return result
