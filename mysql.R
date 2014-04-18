@@ -43,11 +43,12 @@ run_sql_file <- function(conn, file) {
 	queries <- character()
 	query <- ""
 	for (line in readLines(file)) {
+		line <- sub('^(.*)\\s*--.*$', '\\1', line, perl = TRUE) # remove one line comment
 		if (grepl("^\\s*$", line)) next # empty line
 		query <- paste(query, line)
-		if (grepl(";\\s*$", line, perl=TRUE)) {
-			query <- gsub("\t", " ", query, perl=TRUE) # replace tabulation by spaces
-			query <- gsub("/\\*.*\\*/", "", query, perl=TRUE) # remove comments
+		if (grepl(";\\s*$", line, perl = TRUE)) {
+			query <- gsub("\t", " ", query, perl = TRUE) # replace tabulation by spaces
+			query <- gsub("/\\*.*\\*/", "", query, perl = TRUE) # remove multiline comments
 			queries <- c(queries, query)
 			query <- ""
 		}
