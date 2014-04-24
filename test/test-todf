@@ -1,0 +1,23 @@
+#!/usr/bin/env Rscript
+# vi: ft=R
+library(RUnit, quietly = TRUE)
+source('../todf.R', chdir = TRUE)
+
+#####################
+# TEST VALUE TO STR #
+#####################
+
+test_todf <- function() {
+	checkEquals(data.frame(), todf(NULL))
+	checkEquals(data.frame(), todf(NA_character_))
+	checkEquals(data.frame(), todf(list()))
+	checkEquals(data.frame(), todf(list(c('a', 'b'))))
+	checkEquals(data.frame(length = c(12), weight = c(6)), todf(list(c(length = 12, weight = 6))))
+	checkEquals(data.frame(length = c(12, NA_integer_), weight = c(NA_integer_, 6)), todf(list(c(length = 12), c(weight = 6))))
+}
+
+########
+# MAIN #
+########
+
+test_todf()
