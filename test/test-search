@@ -1,0 +1,32 @@
+#!/usr/bin/env Rscript
+# vi: ft=R
+library(RUnit, quietly = TRUE)
+source('../search.R', chdir = TRUE)
+
+######################
+# TEST BINARY SEARCH #
+######################
+
+test_binary.search <- function() {
+	checkEquals(2, binary.search(3, c(1,3,6)))
+	checkEquals(2, binary.search(3, c(1,3,3,6)))
+	checkEquals(2, binary.search(3, c(1,3,3,6), lower = TRUE))
+	checkEquals(2, binary.search(3, c(1,3,3,3,6), lower = TRUE))
+	checkEquals(3, binary.search(3, c(1,3,3,6), lower = FALSE))
+	checkEquals(4, binary.search(3, c(1,3,3,3,6), lower = FALSE))
+	checkEquals(1, binary.search(1, c(1,3,6)))
+	checkEquals(1, binary.search(0, c(1,3,6)))
+	checkEquals(3, binary.search(6, c(1,3,6)))
+	checkEquals(3, binary.search(9, c(1,3,6)))
+	checkEquals(0, binary.search(9, integer()))
+	checkException(binary.search(9, NULL), silent = TRUE)
+	checkException(binary.search(9, NA_integer_), silent = TRUE)
+	checkException(binary.search(NULL, c(1,3,6)), silent = TRUE)
+	checkTrue(is.na(binary.search(NA_integer_, c(1,3,6))))
+}
+
+########
+# MAIN #
+########
+
+test_binary.search()
