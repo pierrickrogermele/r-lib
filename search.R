@@ -7,7 +7,7 @@
 # Returns the index of the found value, or NA.
 binary.search <- function(val, tab, lower = NA, first = 1L, last = length(tab)) 
 { 
-	# Undefined array
+	# Check array & value
 	if (is.null(tab))
 		stop('Argument "tab" is NULL.')
 	if (is.null(val))

@@ -22,6 +22,8 @@ test_binary.search <- function() {
 	checkTrue(is.na(binary.search(0, c(1,3,6))))
 	checkTrue(is.na(binary.search(0, c(1,3,6), lower = TRUE)))
 	checkEquals(3, binary.search(6, c(1,3,6)))
+	checkEquals(3, binary.search(6, c(1,3,6), lower = FALSE))
+	checkEquals(3, binary.search(6, c(1,3,6), lower = TRUE))
 	checkEquals(3, binary.search(9, c(1,3,6), lower = TRUE))
 	checkTrue(is.na(binary.search(9, c(1,3,6))))
 	checkTrue(is.na(binary.search(9, c(1,3,6), lower = FALSE)))
