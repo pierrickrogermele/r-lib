@@ -1,4 +1,6 @@
-library(xlsx)
+library(rJava)
+library(xlsxjars)
+library(xlsx, quietly = TRUE)
 source('strhlp.R')
 
 ###############
