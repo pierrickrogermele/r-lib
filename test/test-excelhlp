@@ -5,6 +5,7 @@ library(RUnit)
 args <- commandArgs(trailingOnly = F)
 script_path <- sub("--file=","",args[grep("--file",args)])
 source(file.path(dirname(script_path), '..', 'excelhlp.R'), chdir = TRUE)
+source(file.path(dirname(script_path), '..', 'dfhlp.R'), chdir = TRUE)
 
 ###################
 # TEST READ EXCEL #
@@ -14,11 +15,31 @@ test.read.excel <- function() {
 
 	# Set xls file to test
 	xls_file <- file.path(dirname(script_path), 'files', 'mspos.xls')
+	csv_file <- file.path(dirname(script_path), 'files', "mspos.csv")
 
 	# Read xls file
-	df <- read.excel(xls_file, 'MS_POS')
+	df.xls <- read.excel(xls_file, 'MS_POS', check.names = FALSE, stringsAsFactors = FALSE, trim.header = TRUE, trim.values = TRUE)
 
-	write.csv(df, file = file.path(dirname(script_path), "mspos.csv"))
+	# Load csv file
+	df.csv <- df.read.csv(csv_file, header = TRUE, check.names = FALSE, stringsAsFactors = FALSE, trim.header = TRUE, trim.values = TRUE)
+
+	# Compare
+	checkIdentical(colnames(df.xls), colnames(df.csv))
+	checkIdentical(rownames(df.xls), rownames(df.csv))
+	for(c in 1:ncol(df.xls)) {
+
+		msg <- paste("Columns", colnames(df.xls)[c], "not identical.")
+
+		# XLS columns are read as numeric instead of integer
+		if (class(df.csv[,c]) == 'integer')
+			checkIdentical(as.integer(df.xls[,c]), df.csv[,c], msg)
+
+		else if (typeof(df.csv[,c]) == "double")
+			checkTrue(all.equal(df.csv[,c], df.xls[,c]), msg)
+
+		else
+			checkIdentical(df.xls[,c], df.csv[,c], msg)
+	}
 }
 
 ########

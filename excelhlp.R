@@ -27,14 +27,17 @@ if ( ! exists('read.excel')) { # Do not load again if already loaded
 	##############
 	
 	# Read Excel xlsx file
-	# file
+	# file                  The path to the Excel file.
 	# sheet
 	# start.row
 	# end.row
 	# header                If TRUE, use first line as header line.
-	# correct.header        If TRUE, correct header (column) names in the data frame, by reading explicity the header line in the Excel.
-	# remove.na.rows       If TRUE, remove all lines that contain only NA values.
-	read.excel <- function(file, sheet, start.row = NULL, end.row = NULL, header = TRUE, correct.header = TRUE, remove.na.rows = TRUE) {
+	# check.names           If TRUE, correct header (column) names in the data frame, by replacing non-ASCII characters by dot.
+	# stringsAsFactors      If TRUE, replace string values by factors.
+	# trim.header           If TRUE, remove whitespaces at beginning and of header titles.
+	# trim.values           If TRUE, remove whitespaces at beginning and of string values.
+	# remove.na.rows        If TRUE, remove all lines that contain only NA values.
+	read.excel <- function(file, sheet, start.row = NULL, end.row = NULL, header = TRUE, remove.na.rows = TRUE, check.names = TRUE, stringsAsFactors = TRUE, trim.header = FALSE, trim.values = FALSE) {
 	
 		library(rJava)
 		library(xlsxjars)
@@ -50,21 +53,10 @@ if ( ! exists('read.excel')) { # Do not load again if already loaded
 		}
 	
 		# Call xlsx package
-		df <- read.xlsx(file, sheet, startRow = start.row, endRow = end.row, header = header)
-	
-		# Correct header (column names)
-		# When reading header, read.xlsx replaces punctuation characters, accented characters and other non-ASCII characters by dot characters.
-		# We try here to read directly the header line, and correct column names
-		if (header && correct.header) {
-			hdr <- read.xlsx(file, sheet, startRow = start.row, endRow = start.row, header = FALSE)
-			hdr <- unlist(unname(hdr[1,])) # transform it into a vector of strings
-			hdr <- trim(hdr) # remove spaces at beginning and end
-			colnames(df) <- hdr
-		}
+		df <- read.xlsx(file, sheet, startRow = start.row, endRow = end.row, header = header, check.names = check.names, stringsAsFactors = stringsAsFactors)
 
-		# Remove NA lines
-		if (remove.na.rows)
-			df <- remove.na.rows(df)
+		# Clean data frame
+		df <- df.clean(df, trim.colnames = trim.header, trim.values = trim.values, remove.na.rows = remove.na.rows)
 	
 		return(df)
 	}
