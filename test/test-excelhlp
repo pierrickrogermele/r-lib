@@ -16,9 +16,9 @@ test.read.excel <- function() {
 	xls_file <- file.path(dirname(script_path), 'files', 'mspos.xls')
 
 	# Read xls file
-	df <- read.excel(xls_file, 'MSPOS')
+	df <- read.excel(xls_file, 'MS_POS')
 
-	print(df)
+	write.csv(df, file = file.path(dirname(script_path), "mspos.csv"))
 }
 
 ########

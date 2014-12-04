@@ -2,9 +2,12 @@
 
 	<!-- ALL -->
 	<target name="all">
-		<exec executable="./test-tostr" failonerror="true"/>
-		<exec executable="./test-strhlp" failonerror="true"/>
+		<exec executable="./test-excelhlp" failonerror="true"/>
 		<exec executable="./test-mysql" failonerror="true"/>
+		<exec executable="./test-search" failonerror="true"/>
+		<exec executable="./test-strhlp" failonerror="true"/>
+		<exec executable="./test-todf" failonerror="true"/>
+		<exec executable="./test-tostr" failonerror="true"/>
 	</target>
 
 	<!-- CLEAN -->
