@@ -1,0 +1,28 @@
+#!/usr/bin/env Rscript
+# vi: ft=R
+library('methods') # needed by RUnit
+library(RUnit)
+args <- commandArgs(trailingOnly = F)
+script_path <- sub("--file=","",args[grep("--file",args)])
+source(file.path(dirname(script_path), '..', 'excelhlp.R'), chdir = TRUE)
+
+###################
+# TEST READ EXCEL #
+###################
+
+test.read.excel <- function() {
+
+	# Set xls file to test
+	xls_file <- file.path(dirname(script_path), 'files', 'mspos.xls')
+
+	# Read xls file
+	df <- read.excel(xls_file, 'MSPOS')
+
+	print(df)
+}
+
+########
+# MAIN #
+########
+
+test.read.excel()
