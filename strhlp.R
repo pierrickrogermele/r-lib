@@ -29,4 +29,12 @@ if ( ! exists('trim')) { # Do not load again if already loaded
 		return(v)
 	}
 
+	#################
+	# REMOVE QUOTES #
+	#################
+
+	remove.quotes <- function(s) {
+		return(sub('^["\']?([^\'"]*)["\']?$', '\\1', s, perl = TRUE))
+	}
+
 } # end of load safe guard
