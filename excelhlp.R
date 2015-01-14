@@ -37,7 +37,7 @@ if ( ! exists('read.excel')) { # Do not load again if already loaded
 	# trim.header           If TRUE, remove whitespaces at beginning and of header titles.
 	# trim.values           If TRUE, remove whitespaces at beginning and of string values.
 	# remove.na.rows        If TRUE, remove all lines that contain only NA values.
-	read.excel <- function(file, sheet, start.row = NULL, end.row = NULL, header = TRUE, remove.na.rows = TRUE, check.names = TRUE, stringsAsFactors = TRUE, trim.header = FALSE, trim.values = FALSE) {
+	read.excel <- function(file, sheet, start.row = NULL, end.row = NULL, header = TRUE, remove.na.rows = TRUE, check.names = TRUE, stringsAsFactors = TRUE, trim.header = FALSE, trim.values = FALSE, col.index = NULL) {
 	
 		library(rJava)
 		library(xlsxjars)
@@ -53,7 +53,7 @@ if ( ! exists('read.excel')) { # Do not load again if already loaded
 		}
 	
 		# Call xlsx package
-		df <- read.xlsx(file, sheet, startRow = start.row, endRow = end.row, header = header, check.names = check.names, stringsAsFactors = stringsAsFactors)
+		df <- read.xlsx(file, sheet, startRow = start.row, endRow = end.row, header = header, check.names = check.names, stringsAsFactors = stringsAsFactors, colIndex = col.index)
 
 		# Clean data frame
 		df <- df.clean(df, trim.colnames = trim.header, trim.values = trim.values, remove.na.rows = remove.na.rows)
