@@ -55,6 +55,10 @@ if ( ! exists('read.excel')) { # Do not load again if already loaded
 		# Call xlsx package
 		df <- read.xlsx(file, sheet, startRow = start.row, endRow = end.row, header = header, check.names = check.names, stringsAsFactors = stringsAsFactors, colIndex = col.index)
 
+		# Remove column default names if header was set to false
+		if ( ! header)
+			colnames(df) <- NULL
+
 		# Clean data frame
 		df <- df.clean(df, trim.colnames = trim.header, trim.values = trim.values, remove.na.rows = remove.na.rows)
 	
