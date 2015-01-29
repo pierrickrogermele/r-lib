@@ -71,10 +71,13 @@ if ( ! exists('read.excel')) { # Do not load again if already loaded
 	
 	tab.exists <- function(file, tab) {
 	
+		if (is.null(file) || is.na(file) || is.null(tab) || is.na(tab))
+			return(FALSE)
+	
 		library(rJava)
 		library(xlsxjars)
 		library(xlsx, quietly = TRUE)
-	
+
 		wb <- loadWorkbook(file)
 		sheets <- getSheets(wb)
 		return(tab %in% names(sheets))

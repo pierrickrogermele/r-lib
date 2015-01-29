@@ -49,9 +49,9 @@ if ( ! exists('remove.na.rows')) { # Do not load again if already loaded
 		# Trim values
 		if (trim.values)
 			for (c in 1:ncol(df))
-				if (typeof(df[,c]) == 'character')
-					df[,c] <- trim(df[,c])
-
+				if (typeof(df[[c]]) == 'character')
+					df[[c]] <- trim(df[[c]])
+		
 		return(df)
 	}
 
