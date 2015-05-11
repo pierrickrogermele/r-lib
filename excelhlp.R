@@ -1,8 +1,5 @@
 if ( ! exists('read.excel')) { # Do not load again if already loaded
 	
-	library(rJava)
-	library(xlsxjars)
-	library(xlsx, quietly = TRUE)
 	source('strhlp.R')
 	source('dfhlp.R')
 	
