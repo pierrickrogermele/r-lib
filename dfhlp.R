@@ -2,6 +2,21 @@ if ( ! exists('remove.na.rows')) { # Do not load again if already loaded
 
 	source('strhlp.R')
 
+	#################
+	# RENAME COLUMN #
+	#################
+
+	rename.col <- function(df, cur, new) {
+
+		for (k in seq(cur)) {
+			i <- which(cur[k] == colnames(df)) 
+			if (length(i) == 1)
+				colnames(df)[i] <- new[k]
+		}
+
+		return(df)
+	}
+
 	##################
 	# REMOVE NA ROWS #	
 	##################
