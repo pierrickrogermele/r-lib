@@ -9,14 +9,10 @@ if ( ! exists('load.sdf')) { # Do not load again if already loaded
 	get.inchi <- function(mol) {
 		library(rJava)
 		.jinit()
-		.jaddClassPath(file.path(dirname(r.lib.chem.file.path), 'rlib.jar'))
-		.jaddClassPath(file.path(dirname(r.lib.chem.file.path), '..', 'java-cdk', 'cdk-1.4.19.jar'))
-		print(.jclassPath())
-		inchi <- .jcall('fr/cea/r/lib/Chem', 'S', 'getInchi', mol)
-# FIXME error inside .jcall:
-#			  java.lang.NoSuchMethodError: org.openscience.cdk.config.IsotopeFactory.getInstance(Lorg/openscience/cdk/interfaces/IChemObjectBuilder;)Lorg/openscience/cdk/config/IsotopeFactory;
-# This is because the IChemObjectBuilder found is the one inside rcdklibs loaded by rcdk. cdk-1.4.19.jar is at the end of the classpath. The only solution to put it at the beginning of the class path, is to reinitialize rJava with .jinit(force.init = TRUE), but this reinitialize the JVM and thus erase all current objects.
-		print(inchi)
+		.jaddClassPath(file.path(dirname(r.lib.chem.file.path), '..', 'java-chem', 'fr.cea.chem.debug.jar'))
+		.jaddClassPath(file.path(dirname(r.lib.chem.file.path), '..', 'java-cdk', 'cdk-1.5.10.jar'))
+		cdkhlp <- .jnew('fr/cea/chem/CdkHelper')
+		inchi <- .jcall(cdkhlp, 'S', 'getInchi', mol)
 		return(inchi)
 	}
 
@@ -27,7 +23,6 @@ if ( ! exists('load.sdf')) { # Do not load again if already loaded
 	load.sdf <- function(file) {
 
 		library(stringr)
-		library(rcdk)
 
 		# Valid file ?
 		if ( ! file.exists(file)) {
@@ -79,7 +74,12 @@ if ( ! exists('load.sdf')) { # Do not load again if already loaded
 		close(con)
 
 		# Load molecule structures
-		struct <- load.molecules(file)
+		library(rJava)
+		.jinit()
+		.jaddClassPath(file.path(dirname(r.lib.chem.file.path), '..', 'java-chem', 'fr.cea.chem.debug.jar'))
+		.jaddClassPath(file.path(dirname(r.lib.chem.file.path), '..', 'java-cdk', 'cdk-1.5.10.jar'))
+		cdkhlp <- .jnew('fr/cea/chem/CdkHelper')
+		struct <- .jcall(cdkhlp, '[Lorg/openscience/cdk/interfaces/IAtomContainer;', 'loadSdf', file)
 
 		return(list(struct = struct, info = info))
 	}

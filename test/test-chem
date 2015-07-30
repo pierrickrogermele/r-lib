@@ -22,28 +22,11 @@ test.load.sdf <- function() {
 	checkTrue( ! is.null(mols))
 	checkEquals(length(mols$struct), nrow(mols$info))
 
-	# Check SMILES
-#	print(colnames(mols$info))
-#	if ('SMILES' %in% colnames(mols$info))
-#		for (i in seq(mols$struct)) {
-#			print(get.smiles(mols$struct[[i]]))
-#			print(get.InChi(mols$struct[[i]]))
-#				print(mols$info[i, 'SMILES'])
-#			checkEquals(get.smiles(mols$struct[[i]]), mols$info[i, 'SMILES'])
-#
-#		}
-
-	cp = c(Sys.glob(file.path("/Library/Frameworks/R.framework/Versions/3.2/Resources/library/rcdk/cont", "*.jar")),
-	       Sys.glob(file.path("/Library/Frameworks/R.framework/Versions/3.2/Resources/library/rcdklibs/cont", "*.jar")))
-	.jaddClassPath(cp)
-
 	# Check InChIs
-	print(colnames(mols$info))
 	if ('InChI' %in% colnames(mols$info))
 		for (i in seq(mols$struct)) {
-			inchi <- .jcall('org/guha/rcdk/util/Misc', 'S', 'getInChi', mols$struct[[i]])
-#			inchi <- J("org.openscience.cdk.inchi.InChIGeneratorFactory")$getInstance()$getInChIGenerator(mols$struct[[i]])$getInChI()
-				print(inchi)
+			inchi <- get.inchi(mols$struct[[i]])
+			checkEquals(inchi, mols$info[i, 'InChI'])
 		}
 }
 
@@ -54,10 +37,8 @@ test.load.sdf <- function() {
 test.get.inchi <- function() {
 	file <- file.path(dirname(script.path), 'files', 'results_2_MSMS.txt-chemspider.sdf')
 	mols <- load.sdf(file)
-		for (i in seq(mols$struct)) {
-	checkTrue( ! is.na(get.inchi(mols$struct[[i]])))
-	print(get.inchi(mols$struct[[i]]))
-		}
+		for (i in seq(mols$struct))
+			checkTrue( ! is.na(get.inchi(mols$struct[[i]])))
 }
 
 ########

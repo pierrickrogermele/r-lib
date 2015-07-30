@@ -1,28 +1,7 @@
 <project name="fr.cea.r-lib" default="all">
 
-	<!-- DIRECTORIES -->
-	<property name="build.dir"  value="build"/>
-	<property name="src.dir" value="src"/>
-
-	<!-- DEPENDENCIES -->
-	<include file="../java-cdk/build.xml" as="cdk"/>
-	<path id="fr.cea.r-lib.jars.compiling.dep">
-		<path refid="cdk.1.4.19.jars"/>
-	</path>
-
-	<!-- COMPILE -->
-	<target name="compile">
-		<mkdir dir="${build.dir}"/>
-		<javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false" debug="true" debuglevel="lines,vars,source" classpathref="fr.cea.r-lib.jars.compiling.dep"/>
-	</target>
-
-	<!-- JAR PACKAGE -->
-	<target name="jar" depends="compile">
-		<jar basedir="${build.dir}" destfile="rlib.jar"/>
-	</target>
-
 	<!-- ALL -->
-	<target name="all" depends="jar"/>
+	<target name="all"/>
 
 	<!-- DOC -->
 	<target name="doc"/>
@@ -35,8 +14,6 @@
 	<!-- CLEAN -->
 	<target name="clean">
 		<ant dir="test" target="clean" inheritAll="false"/>
-		<delete dir="${build.dir}"/>
-		<delete dir="." includes="*.jar"/>
 	</target>
 	
 </project>
