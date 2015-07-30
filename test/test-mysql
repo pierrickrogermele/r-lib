@@ -28,9 +28,15 @@ test_run_sql_file <- function(conn) {
 # MAIN #
 ########
 
-# Open connection
-conn <- dbConnect(MySQL(), user = 'root', host = 'localhost')
+if (mysqlHasDefault()) {
 
-# Tests
-test_create_db(conn)
-test_run_sql_file(conn)
+	# Open database connection
+	conn <- dbConnect(RMySQL::MySQL(), dbname = "test")
+
+	# Tests
+	test_create_db(conn)
+	test_run_sql_file(conn)
+
+	# Close database connection
+	dbDisconnect(conn)
+}
