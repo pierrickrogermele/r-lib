@@ -1,16 +1,17 @@
 #!/usr/bin/env Rscript
 # vi: ft=R
 library(RUnit, quietly = TRUE)
-source('../chem.R', chdir = TRUE)
 args <- commandArgs(trailingOnly = F)
 script.path <- sub("--file=","",args[grep("--file",args)])
-library(rJava)
+source(file.path(dirname(script.path), '..', 'chem.R'), chdir = TRUE)
 
 #################
 # TEST LOAD SDF #
 #################
 
 test.load.sdf <- function() {
+
+	library(rJava)
 
 	# Bad file
 	checkTrue(is.null(load.sdf('toto.sdf')))
@@ -32,6 +33,10 @@ test.load.sdf <- function() {
 #
 #		}
 
+	cp = c(Sys.glob(file.path("/Library/Frameworks/R.framework/Versions/3.2/Resources/library/rcdk/cont", "*.jar")),
+	       Sys.glob(file.path("/Library/Frameworks/R.framework/Versions/3.2/Resources/library/rcdklibs/cont", "*.jar")))
+	.jaddClassPath(cp)
+
 	# Check InChIs
 	print(colnames(mols$info))
 	if ('InChI' %in% colnames(mols$info))
@@ -42,8 +47,22 @@ test.load.sdf <- function() {
 		}
 }
 
+##################
+# TEST GET INCHI #
+##################
+
+test.get.inchi <- function() {
+	file <- file.path(dirname(script.path), 'files', 'results_2_MSMS.txt-chemspider.sdf')
+	mols <- load.sdf(file)
+		for (i in seq(mols$struct)) {
+	checkTrue( ! is.na(get.inchi(mols$struct[[i]])))
+	print(get.inchi(mols$struct[[i]]))
+		}
+}
+
 ########
 # MAIN #
 ########
 
+test.get.inchi()
 test.load.sdf()
