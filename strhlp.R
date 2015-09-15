@@ -29,6 +29,25 @@ if ( ! exists('trim')) { # Do not load again if already loaded
 		return(v)
 	}
 
+	########################
+	# SPLIT KEY/VALUE LIST #
+	########################
+
+	split.kv.list <- function(s, sep = ',', kvsep = '=') {
+
+		# Split
+		kvs <- strsplit(strsplit(s, sep)[[1]], kvsep)
+
+		# Get keys
+		k <- vapply(kvs, function(x) x[[1]], FUN.VALUE = '')
+		v <- vapply(kvs, function(x) x[[2]], FUN.VALUE = '')
+
+		# Set names
+		names(v) <- k
+
+		return(v)
+	}
+
 	#################
 	# REMOVE QUOTES #
 	#################

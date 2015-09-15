@@ -45,9 +45,18 @@ test_split <- function() {
 	checkIdentical(c("12", "13"), split("12,13", ",", unlist = TRUE))
 }
 
+#############################
+# TEST SPLIT KEY/VALUE LIST #
+#############################
+
+test.split.kv.list <- function() {
+	checkIdentical(c(mz = 'zop', rt = 'vroom'), split.kv.list('mz=zop,rt=vroom'))
+}
+
 ########
 # MAIN #
 ########
 
 test_trimming()
 test_split()
+test.split.kv.list()
