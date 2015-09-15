@@ -53,6 +53,14 @@ test.split.kv.list <- function() {
 	checkIdentical(c(mz = 'zop', rt = 'vroom'), split.kv.list('mz=zop,rt=vroom'))
 }
 
+##############################
+# TEST CONCAT KEY/VALUE LIST #
+##############################
+
+test.concat.kv.list <- function() {
+	checkIdentical('mz=zop,rt=vroom', concat.kv.list(c(mz = 'zop', rt = 'vroom')))
+}
+
 ########
 # MAIN #
 ########
@@ -60,3 +68,4 @@ test.split.kv.list <- function() {
 test_trimming()
 test_split()
 test.split.kv.list()
+test.concat.kv.list()

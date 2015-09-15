@@ -48,6 +48,19 @@ if ( ! exists('trim')) { # Do not load again if already loaded
 		return(v)
 	}
 
+	#########################
+	# CONCAT KEY/VALUE LIST #
+	#########################
+
+	concat.kv.list <- function(x, sep = ',', kvsep = '=') {
+
+		k <- names(x)
+
+		s = paste(paste(names(x), x, sep = kvsep), collapse = sep)
+
+		return(s)
+	}
+
 	#################
 	# REMOVE QUOTES #
 	#################
