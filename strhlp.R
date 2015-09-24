@@ -20,7 +20,7 @@ if ( ! exists('trim')) { # Do not load again if already loaded
 	# s         The string to split.
 	# sep       The separator on which to split.
 	# trim      Trim whitespaces for the resulting elements.
-	# unlist    Unlist the result, So that for a single string (i.e.: s has length 1), it returns a vector of strings instewad of a list of vectors of strings.
+	# unlist    Unlist the result, So that for a single string (i.e.: s has length 1), it returns a vector of strings instead of a list of vectors of strings.
 	# RETURN    A list of strings.
 	split <- function(s, sep = ',', trim = TRUE, unlist = FALSE) {
 		v <- strsplit(s, sep)
