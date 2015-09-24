@@ -1,5 +1,3 @@
-library(bitops)
-library(RCurl)
 
 #####################
 # CLASS DECLARATION #
@@ -67,6 +65,9 @@ UrlRequestScheduler$methods( .get_curl_opts = function(url) {
 ###########
 
 UrlRequestScheduler$methods( getUrl = function(url, params = NULL, method = 'GET') {
+
+	library(bitops)
+	library(RCurl)
 
 	content <- NA_character_
 
