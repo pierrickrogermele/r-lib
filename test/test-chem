@@ -14,7 +14,7 @@ test.load.sdf <- function() {
 	library(rJava)
 
 	# Bad file
-	checkTrue(is.null(load.sdf('toto.sdf')))
+	checkTrue(is.null(load.sdf('toto.sdf', silent = TRUE)))
 
 	# Read file
 	file <- file.path(dirname(script.path), 'files', 'results_2_MSMS.txt-chemspider.sdf')

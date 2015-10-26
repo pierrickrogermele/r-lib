@@ -20,13 +20,14 @@ if ( ! exists('load.sdf')) { # Do not load again if already loaded
 	# LOAD SDF #
 	############
 
-	load.sdf <- function(file) {
+	load.sdf <- function(file, silent = FALSE) {
 
 		library(stringr)
 
 		# Valid file ?
 		if ( ! file.exists(file)) {
-			warning(paste0("SDF File \"", file, "\" does not exist."))
+			if ( ! silent)
+				warning(paste0("SDF File \"", file, "\" does not exist."))
 			return(NULL)
 		}
 
