@@ -3,7 +3,7 @@
 # CLASS DECLARATION #
 #####################
 
-UrlRequestScheduler <- setRefClass("UrlRequestScheduler", fields = list(n = "numeric", t = "numeric", time_of_last_request = "ANY", useragent = "character"))
+UrlRequestScheduler <- setRefClass("UrlRequestScheduler", fields = list(n = "numeric", t = "numeric", time_of_last_request = "ANY", useragent = "character", .ssl.verifypeer = "logical"))
 
 # n: number of connections
 # t: time (in seconds)
@@ -14,11 +14,12 @@ UrlRequestScheduler <- setRefClass("UrlRequestScheduler", fields = list(n = "num
 # CONSTRUCTOR #
 ###############
 
-UrlRequestScheduler$methods( initialize = function(n = 1, t = 1, useragent = NA_character_, ...) {
+UrlRequestScheduler$methods( initialize = function(n = 1, t = 1, useragent = NA_character_, ssl.verifypeer = TRUE, ...) {
 	n <<- n
 	t <<- t
 	time_of_last_request <<- -1
 	useragent <<- useragent
+	.ssl.verifypeer <<- ssl.verifypeer
 	callSuper(...) # calls super-class initializer with remaining parameters
 })
 
@@ -84,7 +85,7 @@ UrlRequestScheduler$methods( getUrl = function(url, params = NULL, method = 'GET
 
 	# Get URL normally
 	else
-		content <- getURL(url, .opts = .self$.get_curl_opts())
+		content <- getURL(url, .opts = .self$.get_curl_opts(), ssl.verifypeer = .self$.ssl.verifypeer)
 
 	return(content)
 })
