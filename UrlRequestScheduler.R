@@ -57,7 +57,7 @@ UrlRequestScheduler$methods( .wait_as_needed = function() {
 ####################
 
 UrlRequestScheduler$methods( .get_curl_opts = function(url) {
-	opts <- curlOptions(useragent = .self$useragent)
+	opts <- curlOptions(useragent = .self$useragent, timeout.ms = 60000, verbose = FALSE)
 	return(opts)
 })
 
