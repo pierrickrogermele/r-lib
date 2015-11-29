@@ -19,6 +19,6 @@ if ( ! exists('extract.address')) {
 
 		port <- sub('^.*:([0-9]+)$', '\\1', url, perl = TRUE)
 
-		return(port)
+		return(as.integer(port))
 	}
 }
