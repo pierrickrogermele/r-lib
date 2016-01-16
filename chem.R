@@ -5,6 +5,8 @@ if ( ! exists('load.sdf')) { # Do not load again if already loaded
 	#############
 
 	R.LIB.CHEM.FILE.PATH <- parent.frame(2)$ofile
+
+	GROUP.CARBOXYL <- "carboxyl"
 	
 	##################
 	# LOAD JAVA CHEM #
@@ -13,6 +15,7 @@ if ( ! exists('load.sdf')) { # Do not load again if already loaded
 	load.java.chem <- function() {
 		library(rJava)
 		.jinit()
+		.jcall('java/lang/System', 'S', 'setProperty', "rJava.debug", "1") # DEBUG/VERBOSE mode --> TODO does not work
 		cmd <- c("mvn", "-f", file.path(dirname(R.LIB.CHEM.FILE.PATH), '..', 'java-chem'), "org.apache.maven.plugins:maven-dependency-plugin:2.10:build-classpath")
 		classpath <- system(paste(cmd, collapse = " "), intern = TRUE)
 		classpath <- grep("^\\[INFO]", classpath, invert = TRUE, value = TRUE)
@@ -32,7 +35,27 @@ if ( ! exists('load.sdf')) { # Do not load again if already loaded
 		return(inchi)
 	}
 
-	# 
+	#########################
+	# CONTAINS SUBSTRUCTURE #
+	#########################
+
+	contains.substructure <- function(inchi, group) {
+
+		load.java.chem()
+		cdkhlp <- .jnew('org/openscience/chem/CdkHelper')
+
+		# Build substructure
+		sub <- .jcall(cdkhlp, 'Lorg/openscience/cdk/interfaces/IAtomContainer;', 'makeFunctionalGroup', toupper(group))
+
+		# Build molecule
+		mol <- .jcall(cdkhlp, 'Lorg/openscience/cdk/interfaces/IAtomContainer;', 'makeAtomContainer', inchi)
+
+		# Search for substructure
+		contains <- .jcall(cdkhlp, 'Z', 'containsSubstructure', mol, sub)
+
+		return(contains)
+	}
+
 	############
 	# LOAD SDF #
 	############

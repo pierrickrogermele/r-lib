@@ -5,6 +5,16 @@ args <- commandArgs(trailingOnly = F)
 script.path <- sub("--file=","",args[grep("--file",args)])
 source(file.path(dirname(script.path), '..', 'chem.R'), chdir = TRUE)
 
+##############################
+# TEST CONTAINS SUBSTRUCTURE #
+##############################
+
+test.contains.substructure <- function() {
+	checkTrue(contains.substructure("InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3", "alcohol"))
+	checkTrue( ! contains.substructure("InChI=1S/C2H6/c1-2/h1-2H3", "alcohol"))
+	checkTrue(contains.substructure("InChI=1/C13H18Cl2N2O2/c14-5-7-17(8-6-15)11-3-1-10(2-4-11)9-12(16)13(18)19/h1-4,12H,5-9,16H2,(H,18,19)/t12-/m0/s1", "carboxyl"))
+}
+
 #################
 # TEST LOAD SDF #
 #################
@@ -45,5 +55,6 @@ test.get.inchi <- function() {
 # MAIN #
 ########
 
+test.contains.substructure()
 test.get.inchi()
 test.load.sdf()
