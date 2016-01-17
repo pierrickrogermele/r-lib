@@ -6,7 +6,7 @@ if ( ! exists('load.sdf')) { # Do not load again if already loaded
 
 	R.LIB.CHEM.FILE.PATH <- parent.frame(2)$ofile
 
-	GROUP.CARBOXYL <- "carboxyl"
+	CARBOXYL.GROUP <- "carboxyl"
 	
 	##################
 	# LOAD JAVA CHEM #
@@ -44,14 +44,8 @@ if ( ! exists('load.sdf')) { # Do not load again if already loaded
 		load.java.chem()
 		cdkhlp <- .jnew('org/openscience/chem/CdkHelper')
 
-		# Build substructure
-		sub <- .jcall(cdkhlp, 'Lorg/openscience/cdk/interfaces/IAtomContainer;', 'makeFunctionalGroup', toupper(group))
-
-		# Build molecule
-		mol <- .jcall(cdkhlp, 'Lorg/openscience/cdk/interfaces/IAtomContainer;', 'makeAtomContainer', inchi)
-
 		# Search for substructure
-		contains <- .jcall(cdkhlp, 'Z', 'containsSubstructure', mol, sub)
+		contains <- .jcall(cdkhlp, '[Z', 'containFunctionalGroup', inchi, toupper(group))
 
 		return(contains)
 	}
