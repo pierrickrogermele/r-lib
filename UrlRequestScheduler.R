@@ -77,9 +77,6 @@ UrlRequestScheduler$methods( .get_curl_opts = function(url) {
 
 UrlRequestScheduler$methods( .doGetUrl = function(url, params = NULL, method = 'GET') {
 
-	library(bitops)
-	library(RCurl)
-
 	content <- NA_character_
 
 	# Use form to send URL request
@@ -98,6 +95,10 @@ UrlRequestScheduler$methods( .doGetUrl = function(url, params = NULL, method = '
 })
 
 UrlRequestScheduler$methods( getUrl = function(url, params = NULL, method = 'GET') {
+
+	# Load library here and not inside .doGetUrl() since it is called from inside a try/catch clause, hence if library is missing the error will be ignored.
+	library(bitops)
+	library(RCurl)
 
 	content <- NA_character_
 
