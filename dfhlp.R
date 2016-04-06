@@ -26,6 +26,21 @@ if ( ! exists('remove.na.rows')) { # Do not load again if already loaded
 		return(df[ ! na.rows, , drop = FALSE])
 	}
 
+	##############
+	# READ TABLE #
+	##############
+
+	df.read.table <- function(file, sep = "", header = TRUE, remove.na.rows = TRUE, check.names = TRUE, stringsAsFactors = TRUE, trim.header = FALSE, trim.values = FALSE, fileEncoding = "") {
+
+		# Call built-in read.table()
+		df <- read.table(file, sep = sep, header = header, check.names = check.names, stringsAsFactors = stringsAsFactors, fileEncoding = fileEncoding)
+
+		# Clean data frame
+		df <- df.clean(df, trim.colnames = trim.header, trim.values = trim.values, remove.na.rows = remove.na.rows)
+
+		return(df)
+	}
+
 	#################
 	# READ CSV FILE #
 	#################
@@ -45,6 +60,8 @@ if ( ! exists('remove.na.rows')) { # Do not load again if already loaded
 
 		# Clean data frame
 		df <- df.clean(df, trim.colnames = trim.header, trim.values = trim.values, remove.na.rows = remove.na.rows)
+
+		return(df)
 	}
 
 	##################
