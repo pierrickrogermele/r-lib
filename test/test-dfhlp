@@ -30,8 +30,44 @@ test.remove.na.rows <- function() {
 	}
 }
 
+##########################
+# TEST MOVE COLUMNS LAST #
+##########################
+
+test.move.col.last <- function() {
+
+	# 2 cols
+	x <- data.frame(a=c(1,4),b=c(5,16))
+	y <- df.move.col.last(x, 'a')
+	checkIdentical(colnames(y), c('b', 'a'))
+
+	# 3 cols
+	x <- data.frame(a=c(1,4),b=c(5,16), c=c(56,13))
+	y <- df.move.col.last(x, 'b')
+	checkIdentical(colnames(y), c('a', 'c', 'b'))
+}
+
+###########################
+# TEST MOVE COLUMNS FIRST #
+###########################
+
+test.move.col.first <- function() {
+
+	# 2 cols
+	x <- data.frame(a=c(1,4),b=c(5,16))
+	y <- df.move.col.first(x, 'b')
+	checkIdentical(colnames(y), c('b', 'a'))
+
+	# 3 cols
+	x <- data.frame(a=c(1,4),b=c(5,16),c=c(57,123))
+	y <- df.move.col.first(x, 'b')
+	checkIdentical(colnames(y), c('b', 'a', 'c'))
+}
+
 ########
 # MAIN #
 ########
 
 test.remove.na.rows()
+test.move.col.first()
+test.move.col.last()

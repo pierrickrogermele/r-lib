@@ -26,6 +26,24 @@ if ( ! exists('remove.na.rows')) { # Do not load again if already loaded
 		return(df[ ! na.rows, , drop = FALSE])
 	}
 
+	######################
+	# MOVE COLUMNS FIRST #
+	######################
+
+	df.move.col.first <- function(df, cols) {
+		not.cols <- setdiff(names(df), cols)
+		df[c(cols, not.cols)]
+	}
+
+	#####################
+	# MOVE COLUMNS LAST #
+	#####################
+
+	df.move.col.last <- function(df, cols) {
+		not.cols <- setdiff(names(df), cols)
+		df[c(not.cols, cols)]
+	}
+
 	##############
 	# READ TABLE #
 	##############
