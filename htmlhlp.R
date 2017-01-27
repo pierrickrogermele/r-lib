@@ -41,12 +41,14 @@ if ( ! exists('HtmlWriter')) { # Do not load again if already loaded
 	# WRITE TAG #
 	#############
 
-	HtmlWriter$methods( writeTag = function(tag, text = NA_character_, indent = NA_integer_, newline = TRUE) {
+	HtmlWriter$methods( writeTag = function(tag, attr = NA_character_, text = NA_character_, indent = NA_integer_, newline = TRUE) {
 
-		if (is.na(text))
-			.self$write(paste0("<", tag, "/>"), indent = indent, newline = newline, escape = FALSE)
+		if (is.na(text)) {
+			attributes <- if (is.na(attr)) '' else paste0(' ', paste(vapply(names(attr), function(a) paste0(a, '="', attr[[a]], '"'), FUN.VALUE=''), collapse = ' '))
+			.self$write(paste0("<", tag, attributes, "/>"), indent = indent, newline = newline, escape = FALSE)
+		}
 		else {
-			.self$writeBegTag(tag, indent = indent, newline = FALSE)
+			.self$writeBegTag(tag, attr = attr, indent = indent, newline = FALSE)
 			.self$write(text, escape = TRUE , indent = 0, newline = FALSE)
 			.self$writeEndTag(tag, indent = 0, newline = newline)
 		}
@@ -56,10 +58,11 @@ if ( ! exists('HtmlWriter')) { # Do not load again if already loaded
 	# WRITE BEGIN TAG #
 	###################
 
-	HtmlWriter$methods( writeBegTag = function(tag, indent = NA_integer_, newline = TRUE) {
+	HtmlWriter$methods( writeBegTag = function(tag, attr = NA_character_, indent = NA_integer_, newline = TRUE) {
 
 		# Write opening tag
-		.self$write(paste0("<", tag, ">"), indent = indent, newline = newline, escape = FALSE)
+		attributes <- if (is.na(attr)) '' else paste0(' ', paste(vapply(names(attr), function(a) paste0(a, '="', attr[[a]], '"'), FUN.VALUE=''), collapse = ' '))
+		.self$write(paste0("<", tag, attributes, ">"), indent = indent, newline = newline, escape = FALSE)
 
 		# Increment auto-indent
 		if ( ! is.na(.self$.auto.indent))
@@ -92,7 +95,7 @@ if ( ! exists('HtmlWriter')) { # Do not load again if already loaded
 		if ( ! is.null(colnames(x))) {
 			.self$writeBegTag('tr', indent = indent + 1, newline = newline)
 			for (field in colnames(x))
-				.self$writeTag('th', field, indent = indent + 2, newline = newline)
+				.self$writeTag('th', text = field, indent = indent + 2, newline = newline)
 			.self$writeEndTag('tr', indent = indent + 1, newline = newline)
 		}
 
@@ -101,7 +104,7 @@ if ( ! exists('HtmlWriter')) { # Do not load again if already loaded
 			for (i in 1:nrow(x)) {
 				.self$writeBegTag('tr', indent = indent + 1, newline = newline)
 				for (j in 1:ncol(x))
-					.self$writeTag('td', x[i, j], indent = indent + 2, newline = newline)
+					.self$writeTag('td', text = x[i, j], indent = indent + 2, newline = newline)
 				.self$writeEndTag('tr', indent = indent + 1, newline = newline)
 			}
 		.self$writeEndTag('table', indent = indent, newline = newline)
